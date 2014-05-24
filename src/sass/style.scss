@@ -2,9 +2,11 @@
 @import 'compass/typography';
 @import 'compass/utilities';
 
+@import '_base/variables';
+
 body {
-    color: #333;
-    font-family: Arial, Verdana, sans-serif;
+    color: $color-primary;
+    font-family: $lucida;
     font-size: 100%;
 	margin: 0;
 	overflow-x: hidden;

@@ -29,10 +29,10 @@ var src = {
 };
 // Set assets folders.
 var assets = {
-    scripts: './assets/js/**/*.js',
-    styles: './assets/css/**/*.css',
-    images: './assets/images/**/*',
-    fonts: './assets/fonts/**/*'
+    scripts: './assets/js',
+    styles: './assets/css',
+    images: './assets/images',
+    fonts: './assets/fonts'
 };
 
 // Lint scripts.
@@ -63,7 +63,7 @@ gulp.task('sass', function() {
             css: assets.styles,
             sass: src.sass,
             img: src.images,
-			style: 'nested', //The output style for the compiled css. Nested, expanded, compact, or compressed.
+			style: 'expanded', //The output style for the compiled css. Nested, expanded, compact, or compressed.
 			comments: false,
 			relative: false,
         }))
@@ -98,25 +98,12 @@ gulp.task('reload-browser', function() {
  
 // Watch files for changes.
 gulp.task('watch', function() {
-    gulp.watch( src.scripts, function(event) {
-        gulp.run('lint');
-        gulp.run('scripts');
-    });
-    gulp.watch( src.sass, function(event) {
-        gulp.run('compass');
-    });
-    gulp.watch( src.images, function(event) {
-	   gulp.run('images');
-    });
-    gulp.watch( src.fonts, function(event) {
-	   gulp.run('fonts');
-    });
-    gulp.watch( dir.staticFiles, function(){
-        gulp.run('reload-browser');
-    });
+    gulp.watch( src.scripts, ['lint', 'scripts'] );
+    gulp.watch( src.sass, ['sass'] );
+    gulp.watch( src.images, ['images'] );
+    gulp.watch( src.fonts, ['fonts'] );
+    gulp.watch( dir.staticFiles, ['reload-browser'] );
 });
  
 // Default task.
-gulp.task('default', ['fonts' , 'images', 'lint', 'sass', 'scripts'], function() {
-	gulp.run('watch');
-});
+gulp.task('default', ['fonts' , 'images', 'lint', 'sass', 'scripts', 'watch']);

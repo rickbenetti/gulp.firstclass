@@ -7,7 +7,7 @@
 #################
 *.zip
 /node_modules
-/docs/node_modules
+/.sass-cache
 *~
 .project
 .settings
