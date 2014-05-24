@@ -1,82 +1,122 @@
-/* jshint node:true */
+// Include gulpJs.
 var gulp = require( 'gulp' );
 
 // Include project requirements.
 var jshint      = require('gulp-jshint'),
     compass     = require('gulp-compass'),
-    minifyCSS   = require('gulp-minify-css'),
     imagemin    = require('gulp-imagemin'),
     concat      = require('gulp-concat'),
     uglify      = require('gulp-uglify'),
-    rename      = require('gulp-rename');
+    rename      = require('gulp-rename'),
+	watch       = require('gulp-watch'),
+    plumber     = require('gulp-plumber'),
+    notify      = require('gulp-notify'),
+    path        = require('path'),
+	livereload  = require('gulp-livereload'),
+	lr          = require('tiny-lr'),
+	server      = lr();
 
+// Static Files
+var dir = {
+    staticFiles: '**/*.{html,php}'
+}
 // Set source folders.
 var src = {
-    scripts: 'src/js/*.js',
-    sass: ['src/sass/*.scss', 'src/sass/*.scss'],
-    images: 'src/images/**/*',
-    fonts: 'src/fonts/**/*'
+    scripts: './src/js/*.js',
+    sass: './src/sass/**/*.{sass,scss}',
+    images: './src/images/**/*',
+    fonts: './src/fonts/**/*'
 };
 // Set assets folders.
 var assets = {
-    scripts: 'asssets/js/*.js',
-    styles: 'asssets/css/*.css',
-    images: 'asssets/images/**/*',
-    fonts: 'asssets/fonts/**/*'
+    scripts: './assets/js/**/*.js',
+    styles: './assets/css/**/*.css',
+    images: './assets/images/**/*',
+    fonts: './assets/fonts/**/*'
 };
 
-// Lint Task
+// Lint scripts.
 gulp.task('lint', function() {
     return gulp.src( src.scripts )
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
  
-// Concatenate & Minify JS
+// Concatenate & minifyJs.
 gulp.task('scripts', function() {
     return gulp.src( src.scripts )
         .pipe(concat('main.js'))
         .pipe(gulp.dest( assets.scripts ))
         .pipe(rename('main.min.js'))
         .pipe(uglify())
-        .pipe(gulp.dest( assets.scripts ));
+        .pipe(gulp.dest( assets.scripts ))
+		.pipe(livereload(server))
+        .pipe(notify({message: 'Images task complete'}));
 });
  
-// Compile Sass with Compass
+// Compile sass with compass.
 gulp.task('sass', function() {
     return gulp.src( src.sass )
+        .pipe(plumber())
         .pipe(compass({
-            // config_file: './src/config.rb',
+            config_file: './config.rb',
             css: assets.styles,
             sass: src.sass,
-            img: src.images
+            img: src.images,
+			style: 'nested', //The output style for the compiled css. Nested, expanded, compact, or compressed.
+			comments: false,
+			relative: false,
         }))
-        .pipe(minifyCSS())
-        .pipe(gulp.dest( assets.styles ));
+        .pipe(gulp.dest( assets.styles ))
+		.pipe(livereload(server))
+        .pipe(notify({message: 'Compass task complete'}));
 });
 
-// Copy images files
+// Copy images files.
 gulp.task('images', function() {
  return gulp.src( src.images )
-    // Pass in options to the task
-    .pipe(imagemin({optimizationLevel: 5}))
-    .pipe(gulp.dest( assets.images ));
+    .pipe(gulp.dest( assets.images ))
+    .pipe(imagemin({optimizationLevel: 4, progressive: true, cache: true}))
+    .pipe(livereload(server))
+    .pipe(notify({message: 'Images copy OK'}));
 });
  
-// Copy fonts files
+// Copy fonts files.
 gulp.task('fonts', function() {
  return gulp.src( src.fonts )
-    .pipe(gulp.dest( assets.fonts ));
+    .pipe(gulp.dest( assets.fonts ))
+    .pipe(livereload(server))
+    .pipe(notify({message: 'Fonts copy OK'}));
+});
+
+// Reload browser.
+gulp.task('reload-browser', function() {
+	gulp.src( dir.staticFiles )
+		.pipe(livereload(server))
+		.pipe(notify({message: 'Reload complete'}));
 });
  
- 
-// Watch Files For Changes
+// Watch files for changes.
 gulp.task('watch', function() {
-    gulp.watch( src.scripts, ['lint', 'scripts']);
-    gulp.watch( src.sass, ['sass']);
-    gulp.watch( src.images, ['images']);
-    gulp.watch( src.fonts, ['fonts']);
+    gulp.watch( src.scripts, function(event) {
+        gulp.run('lint');
+        gulp.run('scripts');
+    });
+    gulp.watch( src.sass, function(event) {
+        gulp.run('compass');
+    });
+    gulp.watch( src.images, function(event) {
+	   gulp.run('images');
+    });
+    gulp.watch( src.fonts, function(event) {
+	   gulp.run('fonts');
+    });
+    gulp.watch( dir.staticFiles, function(){
+        gulp.run('reload-browser');
+    });
 });
  
-// Default Task
-gulp.task('default', ['fonts' , 'images', 'lint', 'sass', 'scripts', 'watch']);
+// Default task.
+gulp.task('default', ['fonts' , 'images', 'lint', 'sass', 'scripts'], function() {
+	gulp.run('watch');
+});

@@ -1,21 +1,40 @@
 {
-  "name": "secondClass",
-  "description": "secondClass it's a WordPress framework based on firstClass an HTML, CSS and jQuery framework",
+  "name": "gulp.firsclass",
   "version": "3.0.0",
-  "title": "secondClass",
+  "description": "firstClass it\\'s a frontend framework",
   "main": "gulpfile.js",
+  "dependencies": {},
   "devDependencies": {
-    "gulp": "~3.6.2",
-    "gulp-jshint": "~1.6.1",
-    "gulp-compass": "~1.1.9",
-    "gulp-minify-css": "~0.3.4",
-    "gulp-imagemin": "~0.5.0",
-    "gulp-concat": "~2.2.0",
-    "gulp-uglify": "~0.3.0",
-    "gulp-rename": "~1.2.0"
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^0.3.0",
+    "gulp-notify": "^1.3.0",
+    "gulp-concat": "^2.2.0",
+    "gulp-livereload": "^1.5.0",
+    "gulp-plumber": "^0.6.2",
+    "gulp-jshint": "^1.6.1",
+    "gulp-compass": "^1.1.8",
+    "gulp-watch": "^0.6.5",
+    "gulp-imagemin": "^0.5.0",
+    "gulp": "^3.6.2",
+    "path": "^0.4.9",
+    "tiny-lr": "0.0.7"
   },
-  "engines": {
-    "node": ">=0.8.0",
-    "npm": ">=1.1.0"
-  }
+  "scripts": {
+    "test": "yes"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rickbenetti/gulp.firstclass.git"
+  },
+  "keywords": [
+    "firstclass",
+    "framework",
+    "gulp",
+    "compass"
+  ],
+  "author": "Rick Benetti",
+  "bugs": {
+    "url": "https://github.com/rickbenetti/gulp.firstclass/issues"
+  },
+  "homepage": "https://github.com/rickbenetti/gulp.firstclass"
 }
